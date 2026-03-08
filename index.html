@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>火灾识别系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 300;
+        }
+        
+        .upload-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #007aff;
+            background-color: #f8f9ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #007aff;
+            background-color: #e3f2fd;
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            font-size: 0.9rem;
+            color: #999;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .button {
+            display: inline-block;
+            background-color: #007aff;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .button:hover {
+            background-color: #0056b3;
+        }
+        
+        .button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .result-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #333;
+        }
+        
+        .result-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .result-image {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-details {
+            font-size: 1.1rem;
+        }
+        
+        .result-item {
+            margin-bottom: 15px;
+        }
+        
+        .result-label {
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .result-value {
+            font-size: 1.2rem;
+            color: #333;
+        }
+        
+        .confidence {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #007aff;
+        }
+        
+        .fire {
+            color: #ff3b30;
+        }
+        
+        .no-fire {
+            color: #34c759;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007aff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+            
+            .upload-section,
+            .result-section {
+                padding: 20px;
+            }
+            
+            .result-content {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>火灾识别系统</h1>
+            <p class="subtitle">上传图片或视频，快速识别火灾风险</p>
+        </header>
+        
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <p class="upload-text">点击或拖拽文件到此处上传</p>
+                <p class="upload-hint">支持图片和视频文件</p>
+                <input type="file" id="fileInput" accept="image/*,video/*">
+                <button class="button" id="uploadButton">选择文件</button>
+            </div>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">正在分析...请稍候</p>
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <div class="result-header">
+                <h2 class="result-title">识别结果</h2>
+                <div>
+                    <button class="button" id="downloadTxtButton">下载 TXT</button>
+                    <button class="button" id="downloadWordButton">下载 Word</button>
+                </div>
+            </div>
+            <div class="result-content">
+                <div>
+                    <img id="resultImage" class="result-image" src="" alt="上传的文件">
+                </div>
+                <div class="result-details">
+                    <div class="result-item">
+                        <div class="result-label">识别结果</div>
+                        <div class="result-value" id="resultStatus"></div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">置信度</div>
+                        <div class="result-value confidence" id="resultConfidence"></div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">分析时间</div>
+                        <div class="result-value" id="resultTime"></div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">文件信息</div>
+                        <div class="result-value" id="resultFileInfo"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2026 火灾识别系统 | 简洁高效的火灾风险评估工具</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 上传区域交互
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const loading = document.getElementById('loading');
+        const resultSection = document.getElementById('resultSection');
+        const resultImage = document.getElementById('resultImage');
+        const resultStatus = document.getElementById('resultStatus');
+        const resultConfidence = document.getElementById('resultConfidence');
+        const resultTime = document.getElementById('resultTime');
+        const resultFileInfo = document.getElementById('resultFileInfo');
+        const downloadTxtButton = document.getElementById('downloadTxtButton');
+        const downloadWordButton = document.getElementById('downloadWordButton');
+        
+        let uploadedFile = null;
+        let recognitionResult = null;
+        
+        // 点击上传区域触发文件选择
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // 拖拽功能
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // 文件选择变化
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // 处理文件上传
+        function handleFile(file) {
+            uploadedFile = file;
+            uploadButton.textContent = file.name;
+            uploadButton.disabled = false;
+        }
+        
+        // 上传按钮点击
+        uploadButton.addEventListener('click', () => {
+            if (uploadedFile) {
+                processFile(uploadedFile);
+            }
+        });
+        
+        // 处理文件（模拟识别过程）
+        function processFile(file) {
+            // 显示加载状态
+            loading.style.display = 'block';
+            resultSection.style.display = 'none';
+            
+            // 模拟处理时间
+            setTimeout(() => {
+                // 模拟识别结果
+                const isFire = Math.random() > 0.3;
+                const confidence = (Math.random() * 30 + 70).toFixed(2);
+                const currentTime = new Date().toLocaleString();
+                
+                recognitionResult = {
+                    isFire: isFire,
+                    confidence: confidence,
+                    time: currentTime,
+                    fileName: file.name,
+                    fileSize: (file.size / 1024).toFixed(2) + ' KB'
+                };
+                
+                // 显示结果
+                displayResult(recognitionResult);
+                
+                // 隐藏加载状态
+                loading.style.display = 'none';
+                resultSection.style.display = 'block';
+            }, 2000);
+        }
+        
+        // 显示结果
+        function displayResult(result) {
+            // 显示上传的图片
+            if (uploadedFile.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    resultImage.src = e.target.result;
+                };
+                reader.readAsDataURL(uploadedFile);
+            } else {
+                // 对于视频，显示视频图标
+                resultImage.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ddd"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>';
+            }
+            
+            // 显示识别结果
+            resultStatus.textContent = result.isFire ? '火灾' : '无火灾';
+            resultStatus.className = result.isFire ? 'result-value fire' : 'result-value no-fire';
+            resultConfidence.textContent = result.confidence + '%';
+            resultTime.textContent = result.time;
+            resultFileInfo.textContent = `${result.fileName} (${result.fileSize})`;
+        }
+        
+        // 下载TXT文件
+        downloadTxtButton.addEventListener('click', () => {
+            if (recognitionResult) {
+                const content = `火灾识别结果\n` +
+                               `================\n` +
+                               `识别结果: ${recognitionResult.isFire ? '火灾' : '无火灾'}\n` +
+                               `置信度: ${recognitionResult.confidence}%\n` +
+                               `分析时间: ${recognitionResult.time}\n` +
+                               `文件信息: ${recognitionResult.fileName} (${recognitionResult.fileSize})`;
+                
+                downloadFile(content, 'fire_detection_result.txt', 'text/plain');
+            }
+        });
+        
+        // 下载Word文件（使用HTML格式）
+        downloadWordButton.addEventListener('click', () => {
+            if (recognitionResult) {
+                const content = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>火灾识别结果</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .result { margin: 20px 0; }
+        .label { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>火灾识别结果</h1>
+    <div class="result">
+        <span class="label">识别结果:</span> ${recognitionResult.isFire ? '火灾' : '无火灾'}
+    </div>
+    <div class="result">
+        <span class="label">置信度:</span> ${recognitionResult.confidence}%
+    </div>
+    <div class="result">
+        <span class="label">分析时间:</span> ${recognitionResult.time}
+    </div>
+    <div class="result">
+        <span class="label">文件信息:</span> ${recognitionResult.fileName} (${recognitionResult.fileSize})
+    </div>
+</body>
+</html>`;
+            
+                downloadFile(content, 'fire_detection_result.docx', 'application/msword');
+            }
+        });
+        
+        // 通用下载函数
+        function downloadFile(content, fileName, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
