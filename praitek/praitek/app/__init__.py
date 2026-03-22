@@ -51,7 +51,7 @@ def get_app_conf_value(key: str, section: str = None,
 
 
 # 创建Flask应用实例
-app = Flask('praitek')
+app = Flask('praitek', static_folder='../static', static_url_path='/static')
 app.config['port'] = 8001
 
 # 日志配置

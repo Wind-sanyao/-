@@ -1,6 +1,10 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
+import sys
+import os
 import signal
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from praitek.app import app, log
 from praitek.router import register_router
