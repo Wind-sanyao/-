@@ -6,21 +6,140 @@
 
 body {
     font-family: 'Microsoft YaHei', Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #A0826D;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+body::before,
+body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+body::before {
+    width: 300px;
+    height: 300px;
+    background: rgba(139, 69, 19, 0.15);
+    top: -100px;
+    left: -100px;
+}
+
+body::after {
+    width: 200px;
+    height: 200px;
+    border: 3px solid rgba(139, 69, 19, 0.2);
+    bottom: 50px;
+    right: -50px;
+}
+
+.decorative-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 6s ease-in-out infinite;
+    z-index: 1;
+}
+
+.decorative-circle-1 {
+    width: 150px;
+    height: 150px;
+    background: rgba(160, 82, 45, 0.1);
+    top: 20%;
+    right: 10%;
+    animation-delay: 0s;
+}
+
+.decorative-circle-2 {
+    width: 80px;
+    height: 80px;
+    border: 2px solid rgba(139, 69, 19, 0.25);
+    bottom: 30%;
+    left: 8%;
+    animation-delay: 1s;
+}
+
+.decorative-circle-3 {
+    width: 120px;
+    height: 120px;
+    background: rgba(139, 69, 19, 0.08);
+    top: 60%;
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.decorative-circle-4 {
+    width: 60px;
+    height: 60px;
+    border: 2px solid rgba(160, 82, 45, 0.3);
+    top: 15%;
+    left: 20%;
+    animation-delay: 3s;
+}
+
+.decorative-square {
+    position: absolute;
+    pointer-events: none;
+    animation: float 8s ease-in-out infinite;
+    z-index: 1;
+}
+
+.decorative-square-1 {
+    width: 100px;
+    height: 100px;
+    background: rgba(160, 82, 45, 0.12);
+    top: 40%;
+    left: 5%;
+    transform: rotate(15deg);
+    animation-delay: 0.5s;
+}
+
+.decorative-square-2 {
+    width: 70px;
+    height: 70px;
+    border: 2px solid rgba(139, 69, 19, 0.2);
+    bottom: 20%;
+    right: 8%;
+    transform: rotate(-10deg);
+    animation-delay: 1.5s;
+}
+
+.decorative-square-3 {
+    width: 50px;
+    height: 50px;
+    background: rgba(139, 69, 19, 0.15);
+    top: 70%;
+    left: 15%;
+    transform: rotate(25deg);
+    animation-delay: 2.5s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+    }
 }
 
 .container {
-    background: white;
+    background: #F5E6D3;
     border-radius: 10px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 500px;
     padding: 30px;
+    position: relative;
+    z-index: 100;
 }
 
 .header {
@@ -54,7 +173,7 @@ body {
 .form-group select {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 2px solid #e74c3c;
     border-radius: 5px;
     font-size: 14px;
     transition: border-color 0.3s;
@@ -63,20 +182,17 @@ body {
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #6D4C41;
+}
+
+.form-group input.success,
+.form-group select.success {
+    border-color: #6D4C41;
 }
 
 .form-group input.error,
 .form-group select.error {
     border-color: #e74c3c;
-}
-
-.error-message {
-    display: block;
-    color: #e74c3c;
-    font-size: 12px;
-    margin-top: 5px;
-    min-height: 16px;
 }
 
 .camera-fields {
@@ -98,7 +214,7 @@ body {
 #bindButton {
     width: 100%;
     padding: 14px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #6D4C41 0%, #8D6E63 100%);
     color: white;
     border: none;
     border-radius: 5px;
@@ -110,16 +226,16 @@ body {
 
 #bindButton:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(109, 76, 65, 0.4);
 }
 
 #bindButton:disabled {
-    background: #ccc;
+    background: #BCAAA4;
     cursor: not-allowed;
 }
 
 .success-message {
-    background: #2ecc71;
+    background: #8D6E63;
     color: white;
     padding: 15px;
     border-radius: 5px;
@@ -128,18 +244,7 @@ body {
     animation: slideIn 0.3s ease-out;
 }
 
-.error-message {
-    background: #e74c3c;
-    color: white;
-    padding: 15px;
-    border-radius: 5px;
-    text-align: center;
-    margin-top: 20px;
-    animation: slideIn 0.3s ease-out;
-}
-
-.success-message.hidden,
-.error-message.hidden {
+.success-message.hidden {
     display: none;
 }
 

@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const bindForm = document.getElementById('bindForm');
     const bindButton = document.getElementById('bindButton');
     const successMessage = document.getElementById('successMessage');
-    const errorMessage = document.getElementById('errorMessage');
     const brandSelect = document.getElementById('brand');
     const modelSelect = document.getElementById('model');
     
@@ -25,16 +24,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (selectedType === 'usb') {
             usbFields.classList.remove('hidden');
+            const usbInputs = usbFields.querySelectorAll('input, select');
+            usbInputs.forEach(input => input.classList.add('error'));
         } else if (selectedType === 'rtsp') {
             rtspFields.classList.remove('hidden');
+            const rtspInputs = rtspFields.querySelectorAll('input, select');
+            rtspInputs.forEach(input => input.classList.add('error'));
         }
         
+        validateField(this);
         validateForm();
     });
     
     brandSelect.addEventListener('change', function() {
         const selectedBrand = this.value;
         modelSelect.innerHTML = '<option value="">请选择型号</option>';
+        modelSelect.classList.add('error');
         
         if (selectedBrand && cameraModels[selectedBrand]) {
             cameraModels[selectedBrand].forEach(model => {
@@ -45,50 +50,55 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
+        validateField(this);
+        validateForm();
+    });
+    
+    modelSelect.addEventListener('change', function() {
+        validateField(this);
         validateForm();
     });
     
     const formInputs = bindForm.querySelectorAll('input, select');
     formInputs.forEach(input => {
-        input.addEventListener('input', validateForm);
+        input.addEventListener('input', function() {
+            validateField(this);
+            validateForm();
+        });
         input.addEventListener('blur', function() {
             validateField(this);
         });
     });
     
+    function initializeInputStyles() {
+        const allInputs = bindForm.querySelectorAll('input, select');
+        allInputs.forEach(input => {
+            input.classList.add('error');
+        });
+    }
+    
+    initializeInputStyles();
+    
     function validateField(field) {
         const fieldName = field.name;
         const value = field.value.trim();
-        const errorElement = document.getElementById(fieldName + 'Error');
         
-        if (errorElement) {
-            errorElement.textContent = '';
-            field.classList.remove('error');
-        }
+        field.classList.remove('error', 'success');
         
         if (field.hasAttribute('required') && !value) {
-            if (errorElement) {
-                errorElement.textContent = '此项为必填项';
-                field.classList.add('error');
-            }
+            field.classList.add('error');
             return false;
         }
         
         if (fieldName === 'cameraName' && value.length > 50) {
-            if (errorElement) {
-                errorElement.textContent = '摄像头名称不能超过50个字符';
-                field.classList.add('error');
-            }
+            field.classList.add('error');
             return false;
         }
         
         if (fieldName === 'ipAddress' && value) {
             const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
             if (!ipRegex.test(value)) {
-                if (errorElement) {
-                    errorElement.textContent = '请输入有效的IP地址';
-                    field.classList.add('error');
-                }
+                field.classList.add('error');
                 return false;
             }
         }
@@ -96,14 +106,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (fieldName === 'port' && value) {
             const port = parseInt(value);
             if (port < 1 || port > 65535) {
-                if (errorElement) {
-                    errorElement.textContent = '端口范围应在1-65535之间';
-                    field.classList.add('error');
-                }
+                field.classList.add('error');
                 return false;
             }
         }
         
+        field.classList.add('success');
         return true;
     }
     
@@ -212,21 +220,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = '/monitor';
                 }, 3000);
             } else {
-                errorMessage.textContent = result.error || '绑定失败，请重试';
-                errorMessage.classList.remove('hidden');
+                alert(result.error || '绑定失败，请重试');
                 bindButton.disabled = false;
                 bindButton.textContent = '绑定摄像头';
             }
         } catch (error) {
-            errorMessage.textContent = '网络错误，请检查连接';
-            errorMessage.classList.remove('hidden');
+            alert('网络错误，请检查连接');
             bindButton.disabled = false;
             bindButton.textContent = '绑定摄像头';
         }
     });
     
     const sessionData = localStorage.getItem('cameraSession');
-    if (sessionData) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromExit = urlParams.get('exit');
+    
+    if (sessionData && !fromExit) {
         try {
             const session = JSON.parse(sessionData);
             const now = Date.now();

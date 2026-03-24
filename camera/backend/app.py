@@ -23,6 +23,10 @@ capturers = {}
 
 @app.route('/')
 def index():
+    return render_template('home.html')
+
+@app.route('/bind')
+def bind():
     return render_template('bind.html')
 
 @app.route('/monitor')

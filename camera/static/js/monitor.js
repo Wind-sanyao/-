@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorMessage = document.getElementById('errorMessage');
     const retryButton = document.getElementById('retryButton');
     const cameraNameElement = document.getElementById('cameraName');
+    const exitButton = document.getElementById('exitButton');
     
     let sessionId = null;
     let cameraName = '';
@@ -161,6 +162,14 @@ document.addEventListener('DOMContentLoaded', function() {
     retryButton.addEventListener('click', function() {
         localStorage.removeItem('cameraSession');
         window.location.href = '/';
+    });
+    
+    exitButton.addEventListener('click', function() {
+        stopMonitoring();
+        localStorage.removeItem('cameraSession');
+        setTimeout(function() {
+            window.location.href = '/bind?exit=true';
+        }, 100);
     });
     
     document.addEventListener('visibilitychange', function() {

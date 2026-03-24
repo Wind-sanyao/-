@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="/static/css/bind.css">
 </head>
 <body>
+    <div class="decorative-circle decorative-circle-1"></div>
+    <div class="decorative-circle decorative-circle-2"></div>
+    <div class="decorative-circle decorative-circle-3"></div>
+    <div class="decorative-circle decorative-circle-4"></div>
+    <div class="decorative-square decorative-square-1"></div>
+    <div class="decorative-square decorative-square-2"></div>
+    <div class="decorative-square decorative-square-3"></div>
+    
     <div class="container">
         <div class="header">
             <h1>摄像头绑定</h1>
@@ -26,7 +34,6 @@
                 <div class="form-group">
                     <label for="cameraName">摄像头名称</label>
                     <input type="text" id="cameraName" name="cameraName" maxlength="50" required>
-                    <span class="error-message" id="cameraNameError"></span>
                 </div>
                 
                 <div id="usbFields" class="camera-fields hidden">
@@ -45,25 +52,21 @@
                     <div class="form-group">
                         <label for="ipAddress">IP地址</label>
                         <input type="text" id="ipAddress" name="ipAddress" placeholder="192.168.1.100">
-                        <span class="error-message" id="ipAddressError"></span>
                     </div>
                     
                     <div class="form-group">
                         <label for="port">端口</label>
                         <input type="number" id="port" name="port" min="1" max="65535" value="554">
-                        <span class="error-message" id="portError"></span>
                     </div>
                     
                     <div class="form-group">
                         <label for="username">用户名</label>
                         <input type="text" id="username" name="username">
-                        <span class="error-message" id="usernameError"></span>
                     </div>
                     
                     <div class="form-group">
                         <label for="password">密码</label>
                         <input type="password" id="password" name="password">
-                        <span class="error-message" id="passwordError"></span>
                     </div>
                     
                     <div class="form-group">
@@ -93,7 +96,6 @@
         </div>
         
         <div id="successMessage" class="success-message hidden"></div>
-        <div id="errorMessage" class="error-message hidden"></div>
     </div>
     
     <script src="/static/js/bind.js"></script>
