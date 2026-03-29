@@ -1,6 +1,7 @@
 from ultralytics import YOLO
 import os
 import yaml
+import torch
 
 def train_yolo_with_better_params():
     """
@@ -59,7 +60,7 @@ def train_yolo_with_better_params():
         epochs=100,
         imgsz=640,
         batch=16,
-        device='cpu',
+        device='cuda' if torch.cuda.is_available() else 'cpu',  # 自动检测并使用GPU
         project='runs',
         name='detect_v2',
         exist_ok=True,
