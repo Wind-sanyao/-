@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摄像头绑定</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        input:focus, select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .camera-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .type-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .type-option:hover {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+        
+        .type-option.active {
+            border-color: #667eea;
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .error-message {
+            background-color: #fee;
+            border: 1px solid #fcc;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            color: #c33;
+            font-size: 14px;
+        }
+        
+        .success-message {
+            background-color: #efe;
+            border: 1px solid #cfc;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            color: #3c3;
+            font-size: 14px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>摄像头绑定</h1>
+        
+        <div id="errorMessage" class="error-message hidden"></div>
+        <div id="successMessage" class="success-message hidden"></div>
+        
+        <div class="form-group">
+            <label>摄像头类型</label>
+            <div class="camera-type-selector">
+                <div class="type-option active" data-type="usb">USB摄像头</div>
+                <div class="type-option" data-type="rtsp">网络摄像头</div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="cameraName">摄像头名称</label>
+            <input type="text" id="cameraName" placeholder="请输入摄像头名称" required>
+        </div>
+        
+        <div id="usbForm">
+            <div class="form-group">
+                <label for="deviceIndex">设备索引</label>
+                <input type="number" id="deviceIndex" value="0" min="0" placeholder="通常是 0">
+            </div>
+        </div>
+        
+        <div id="rtspForm" class="hidden">
+            <div class="form-group">
+                <label for="ip">IP地址</label>
+                <input type="text" id="ip" placeholder="例如: 192.168.1.100">
+            </div>
+            
+            <div class="form-group">
+                <label for="port">端口</label>
+                <input type="number" id="port" value="554" placeholder="默认 554">
+            </div>
+            
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" placeholder="摄像头用户名">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" placeholder="摄像头密码">
+            </div>
+            
+            <div class="form-group">
+                <label for="brand">摄像头品牌</label>
+                <select id="brand">
+                    <option value="Hikvision">海康威视 (Hikvision)</option>
+                    <option value="Dahua">大华 (Dahua)</option>
+                    <option value="Axis">安讯士 (Axis)</option>
+                    <option value="Uniview">宇视 (Uniview)</option>
+                    <option value="Other">其他</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="model">型号</label>
+                <input type="text" id="model" placeholder="摄像头型号（可选）">
+            </div>
+        </div>
+        
+        <button class="button" id="bindButton">绑定摄像头</button>
+        
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在绑定摄像头，请稍候...</div>
+        </div>
+    </div>
+    
+    <script src="camera_connection.js"></script>
+</body>
+</html>

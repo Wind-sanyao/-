@@ -1,0 +1,5 @@
+names:
+  0: fire
+path: C:\Users\jessi\source\yolo\datasets\bvn\images
+train: train
+val: val
