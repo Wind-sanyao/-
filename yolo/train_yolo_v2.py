@@ -2,6 +2,19 @@ from ultralytics import YOLO
 import os
 import yaml
 import torch
+import torch.serialization
+from ultralytics.nn.tasks import DetectionModel
+import torch.nn as nn
+
+torch.serialization.add_safe_globals([
+    DetectionModel,
+    nn.modules.container.Sequential,
+    nn.modules.conv.Conv2d,
+    nn.modules.batchnorm.BatchNorm2d,
+    nn.modules.activation.SiLU,
+    nn.modules.pooling.MaxPool2d,
+    nn.modules.upsampling.Upsample,
+])
 
 def train_yolo_with_better_params():
     """
@@ -21,7 +34,7 @@ def train_yolo_with_better_params():
         'path': os.path.join(cwd, 'datasets', 'bvn', 'images'),
         'train': 'train',
         'val': 'val',
-        'names': {0: 'fire'}
+        'names': {0: 'fire', 1: 'smoke'}
     }
     
     print(f"数据集路径: {data_config['path']}")
@@ -61,6 +74,7 @@ def train_yolo_with_better_params():
         imgsz=640,
         batch=16,
         device='cuda' if torch.cuda.is_available() else 'cpu',  # 自动检测并使用GPU
+        workers=0,  # Windows系统设置为0避免多进程问题
         project='runs',
         name='detect_v2',
         exist_ok=True,

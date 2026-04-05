@@ -1,7 +1,7 @@
 task: detect
 mode: train
 model: yolov8n.pt
-data: C:\Users\jessi\source\yolo\yolo-bvn.yaml
+data: C:\Users\jessi\Desktop\university\conpetition\github\project_fire\yolo\yolo-bvn.yaml
 epochs: 100
 time: null
 patience: 50
@@ -10,8 +10,8 @@ imgsz: 640
 save: true
 save_period: -1
 cache: false
-device: cpu
-workers: 8
+device: cuda
+workers: 0
 project: runs
 name: detect_v2
 exist_ok: true

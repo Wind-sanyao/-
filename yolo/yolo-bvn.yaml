@@ -1,5 +1,6 @@
 names:
   0: fire
+  1: smoke
 path: C:\Users\jessi\Desktop\university\conpetition\github\project_fire\yolo\datasets\bvn\images
 train: train
 val: val
