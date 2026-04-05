@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - 火眼金睛</title>
+    <link rel="stylesheet" href="/static/css/settings.css">
+</head>
+<body class="{{ setting.theme }} {{ setting.font_size }}">
+    <div class="settings-container">
+        <div class="header">
+            <h1>系统设置</h1>
+            <a href="/" class="back-link">返回首页</a>
+        </div>
+        
+        {% if message %}
+        <div class="success-message">
+            {{ message }}
+        </div>
+        {% endif %}
+        
+        <div class="settings-content">
+            <form method="POST" action="/settings">
+                <div class="settings-section">
+                    <h2>显示设置</h2>
+                    
+                    <div class="setting-item">
+                        <label for="theme">白天/夜间模式</label>
+                        <select id="theme" name="theme" required>
+                            <option value="light" {% if setting.theme == 'light' %}selected{% endif %}>白天模式</option>
+                            <option value="dark" {% if setting.theme == 'dark' %}selected{% endif %}>夜间模式</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="font_size">字体大小</label>
+                        <select id="font_size" name="font_size" required>
+                            <option value="small" {% if setting.font_size == 'small' %}selected{% endif %}>小</option>
+                            <option value="medium" {% if setting.font_size == 'medium' %}selected{% endif %}>中</option>
+                            <option value="large" {% if setting.font_size == 'large' %}selected{% endif %}>大</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h2>摄像头信息预录入</h2>
+                    <div class="button-group">
+                        <button type="button" class="secondary-button" onclick="showAddCameraForm()">添加预录入摄像头</button>
+                        <button type="button" class="secondary-button" onclick="viewCameras()">查看已有摄像头</button>
+                    </div>
+                    
+                    <div id="cameraList" class="camera-list hidden">
+                        <h3>已录入的摄像头</h3>
+                        <div id="cameraItems"></div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h2>系统状态日志</h2>
+                    <p>识别到火灾的时间和摄像头名称</p>
+                    <a href="/api/logs/export" class="export-button">导出Excel</a>
+                </div>
+                
+                <div class="settings-section">
+                    <h2>摄像头绑定日志</h2>
+                    <div id="bindLogContainer" class="bind-log-container">
+                        <div id="bindLogItems" class="bind-log-items"></div>
+                        <div id="viewMoreLogs" class="view-more-logs hidden">
+                            <button class="view-more-button" onclick="viewMoreBindLogs()">查看更多</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="save-button">保存设置</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="cameraModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>添加预录入摄像头</h3>
+            <form id="addCameraForm">
+                <div class="form-group">
+                    <label for="cameraName">摄像头名称</label>
+                    <input type="text" id="cameraName" required>
+                </div>
+                <div class="form-group">
+                    <label for="cameraType">摄像头类型</label>
+                    <select id="cameraType" required>
+                        <option value="usb">USB摄像头</option>
+                        <option value="rtsp">网络摄像头</option>
+                    </select>
+                </div>
+                
+                <!-- 网络摄像头详细信息 -->
+                <div id="rtspFields" class="camera-fields hidden">
+                    <div class="form-group">
+                        <label for="ipAddress">IP地址</label>
+                        <input type="text" id="ipAddress" placeholder="192.168.1.100">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="port">端口</label>
+                        <input type="number" id="port" min="1" max="65535" value="554">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" id="username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" id="password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="brand">摄像头品牌</label>
+                        <select id="brand">
+                            <option value="">请选择品牌</option>
+                            <option value="hikvision">海康威视</option>
+                            <option value="dahua">大华</option>
+                            <option value="axis">安讯士</option>
+                            <option value="bosch">博世</option>
+                            <option value="samsung">三星</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="save-button">保存</button>
+                    <button type="button" class="cancel-button" onclick="closeCameraModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function showAddCameraForm() {
+            document.getElementById('cameraModal').classList.remove('hidden');
+        }
+        
+        function closeCameraModal() {
+            document.getElementById('cameraModal').classList.add('hidden');
+        }
+        
+        // 监听摄像头类型变化
+        document.getElementById('cameraType').addEventListener('change', function() {
+            const rtspFields = document.getElementById('rtspFields');
+            if (this.value === 'rtsp') {
+                rtspFields.classList.remove('hidden');
+            } else {
+                rtspFields.classList.add('hidden');
+            }
+        });
+        
+
+        
+        function viewCameras() {
+            const cameraList = document.getElementById('cameraList');
+            const cameraItems = document.getElementById('cameraItems');
+            
+            // 显示加载状态
+            cameraItems.innerHTML = '<p>加载中...</p>';
+            cameraList.classList.remove('hidden');
+            
+            // 获取摄像头信息
+            fetch('/api/cameras')
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            // 会话过期，重定向到登录页面
+                            window.location.href = '/login';
+                            return Promise.reject('Session expired');
+                        }
+                        return response.json();
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        cameraItems.innerHTML = '<p style="color: red;">加载失败: ' + data.error + '</p>';
+                        return;
+                    }
+                    
+                    if (data.length === 0) {
+                        cameraItems.innerHTML = '<p>暂无已录入的摄像头</p>';
+                        return;
+                    }
+                    
+                    // 生成摄像头列表
+                    let html = '<div class="camera-grid">';
+                    data.forEach(camera => {
+                        html += `
+                            <div class="camera-item">
+                                <div class="camera-info">
+                                    <div><strong>摄像头名称:</strong> <span class="camera-name">${camera.name}</span></div>
+                                    <div><strong>摄像头类型:</strong> <span class="camera-type">${camera.source_type === 'usb' ? 'USB摄像头' : '网络摄像头'}</span></div>
+                                    <div><strong>连接地址:</strong> <span class="camera-url">${camera.source_url}</span></div>
+                                </div>
+                                <div class="camera-actions">
+                                    <button class="delete-button" onclick="deleteCamera(${camera.id})">删除</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    
+                    cameraItems.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    cameraItems.innerHTML = '<p style="color: red;">加载失败: 网络错误</p>';
+                });
+        }
+        
+        function deleteCamera(cameraId) {
+            if (confirm('确定要删除这个摄像头吗？')) {
+                fetch('/api/cameras', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: cameraId })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            // 会话过期，重定向到登录页面
+                            window.location.href = '/login';
+                            return Promise.reject('Session expired');
+                        }
+                        return response.json();
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert('删除失败: ' + data.error);
+                    } else {
+                        alert('摄像头已删除');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // 只有在不是会话过期的情况下才显示网络错误
+                    if (error !== 'Session expired') {
+                        alert('删除失败: 网络错误');
+                    }
+                })
+                .finally(() => {
+                    // 无论删除操作是否成功，都重新加载摄像头列表
+                    viewCameras();
+                });
+            }
+        }
+        
+        document.getElementById('addCameraForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('cameraName').value,
+                cameraType: document.getElementById('cameraType').value,
+                // 网络摄像头详细信息
+                ipAddress: document.getElementById('ipAddress').value,
+                port: document.getElementById('port').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                brand: document.getElementById('brand').value
+            };
+            
+            // 保存预录入摄像头
+            fetch('/api/cameras', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        // 会话过期，重定向到登录页面
+                        window.location.href = '/login';
+                        return Promise.reject('Session expired');
+                    }
+                    return response.json();
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert('添加失败: ' + data.error);
+                } else {
+                    alert('预录入摄像头已添加');
+                    closeCameraModal();
+                    // 刷新页面以显示新添加的摄像头
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // 只有在不是会话过期的情况下才显示网络错误
+                if (error !== 'Session expired') {
+                    alert('添加失败: 网络错误');
+                }
+            });
+        });
+        
+        // 加载摄像头绑定日志
+        function loadBindLogs() {
+            const bindLogItems = document.getElementById('bindLogItems');
+            const viewMoreLogs = document.getElementById('viewMoreLogs');
+            
+            // 显示加载状态
+            bindLogItems.innerHTML = '<p>加载中...</p>';
+            
+            // 获取绑定日志
+            fetch('/api/bind-logs')
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            // 会话过期，重定向到登录页面
+                            window.location.href = '/login';
+                            return Promise.reject('Session expired');
+                        }
+                        return response.json();
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        bindLogItems.innerHTML = '<p style="color: red;">加载失败: ' + data.error + '</p>';
+                        return;
+                    }
+                    
+                    if (data.length === 0) {
+                        bindLogItems.innerHTML = '<p>暂无绑定日志</p>';
+                        return;
+                    }
+                    
+                    // 生成绑定日志列表
+                    let html = '';
+                    const displayCount = 3;
+                    
+                    // 显示前3条日志
+                    for (let i = 0; i < Math.min(displayCount, data.length); i++) {
+                        const log = data[i];
+                        html += `
+                            <div class="bind-log-item">
+                                <span>${log.bind_time}</span> - 绑定了摄像头 "<strong>${log.camera_name}</strong>"
+                            </div>
+                        `;
+                    }
+                    
+                    // 如果有更多日志，显示"查看更多"按钮
+                    if (data.length > displayCount) {
+                        html += `
+                            <div class="bind-log-item view-more-item">
+                                <button class="view-more-button" onclick="viewMoreBindLogs()">查看更多</button>
+                            </div>
+                        `;
+                    }
+                    
+                    bindLogItems.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // 只有在不是会话过期的情况下才显示网络错误
+                    if (error !== 'Session expired') {
+                        bindLogItems.innerHTML = '<p style="color: red;">加载失败: 网络错误</p>';
+                    }
+                });
+        }
+        
+        // 查看更多绑定日志
+        function viewMoreBindLogs() {
+            const bindLogItems = document.getElementById('bindLogItems');
+            
+            // 显示加载状态
+            bindLogItems.innerHTML = '<p>加载中...</p>';
+            
+            // 获取所有绑定日志
+            fetch('/api/bind-logs?all=true')
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            // 会话过期，重定向到登录页面
+                            window.location.href = '/login';
+                            return Promise.reject('Session expired');
+                        }
+                        return response.json();
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        bindLogItems.innerHTML = '<p style="color: red;">加载失败: ' + data.error + '</p>';
+                        return;
+                    }
+                    
+                    // 生成绑定日志列表
+                    let html = '';
+                    
+                    data.forEach(log => {
+                        html += `
+                            <div class="bind-log-item">
+                                <span>${log.bind_time}</span> - 绑定了摄像头 "<strong>${log.camera_name}</strong>"
+                            </div>
+                        `;
+                    });
+                    
+                    bindLogItems.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // 只有在不是会话过期的情况下才显示网络错误
+                    if (error !== 'Session expired') {
+                        bindLogItems.innerHTML = '<p style="color: red;">加载失败: 网络错误</p>';
+                    }
+                });
+        }
+        
+        // 页面加载时加载绑定日志
+        window.onload = function() {
+            loadBindLogs();
+        };
+    </script>
+</body>
+</html>

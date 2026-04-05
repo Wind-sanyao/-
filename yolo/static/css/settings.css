@@ -1,0 +1,673 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: '黑体', Arial, sans-serif;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: auto;
+    transition: background 0.3s ease, font-size 0.3s ease;
+    font-size: 16px; /* 默认字体大小 */
+}
+
+body.dark {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+}
+
+/* 字体大小样式 */
+body.small {
+    font-size: 14px;
+}
+
+body.medium {
+    font-size: 16px;
+}
+
+body.large {
+    font-size: 18px;
+}
+
+.settings-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    width: 90%;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    transition: border-bottom 0.3s ease;
+}
+
+.header h1 {
+    font-size: 2rem;
+    color: #333;
+    font-weight: normal;
+    transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+.back-link {
+    color: #4ecdc4;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 8px 16px;
+    border: 1px solid #4ecdc4;
+    border-radius: 8px;
+    transition: all 0.3s ease, font-size 0.3s ease;
+}
+
+.back-link:hover {
+    background: #4ecdc4;
+    color: white;
+}
+
+body.dark .settings-container {
+    background: rgba(44, 62, 80, 0.95);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .header {
+    border-bottom: 1px solid #34495e;
+}
+
+body.dark .header h1 {
+    color: #ecf0f1;
+}
+
+body.dark .back-link {
+    color: #3498db;
+    border: 1px solid #3498db;
+}
+
+body.dark .back-link:hover {
+    background: #3498db;
+    color: white;
+}
+
+.success-message {
+    background: #e8f5e8;
+    color: #2e7d32;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.settings-content {
+    margin-bottom: 30px;
+}
+
+.settings-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.settings-section h2 {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: normal;
+    transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    transition: border-bottom 0.3s ease;
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.setting-item label {
+    font-size: 1.1rem;
+    color: #555;
+    transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+.setting-item select {
+    padding: 8px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.3s ease, font-size 0.3s ease;
+}
+
+.setting-item select:focus {
+    outline: none;
+    border-color: #4ecdc4;
+    box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.2);
+}
+
+body.dark .success-message {
+    background: #2c3e50;
+    color: #4caf50;
+}
+
+body.dark .settings-section {
+    background: #34495e;
+}
+
+body.dark .settings-section h2 {
+    color: #ecf0f1;
+}
+
+body.dark .setting-item {
+    border-bottom: 1px solid #2c3e50;
+}
+
+body.dark .setting-item label {
+    color: #bdc3c7;
+}
+
+body.dark .setting-item select {
+    background: #2c3e50;
+    border: 2px solid #2c3e50;
+    color: #ecf0f1;
+}
+
+body.dark .setting-item select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.secondary-button {
+    padding: 10px 20px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+}
+
+.export-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #4ecdc4;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.export-button:hover {
+    background: #3aafaa;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.save-button {
+    padding: 12px 40px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.modal .form-group {
+    margin-bottom: 15px;
+}
+
+.modal .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+}
+
+.modal .form-group input,
+.modal .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.modal .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.cancel-button {
+    padding: 10px 20px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-button:hover {
+    background: #5a6268;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .settings-container {
+        padding: 30px;
+    }
+    
+    .header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .settings-section {
+        padding: 20px;
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .setting-item select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-container {
+        padding: 20px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .settings-section {
+        padding: 15px;
+    }
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.camera-list {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.camera-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.camera-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.camera-info {
+    flex: 1;
+}
+
+.camera-name, .camera-type {
+    color: black;
+    font-weight: normal;
+    transition: color 0.3s ease;
+}
+
+.camera-url {
+    font-size: 14px;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.delete-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
+/* 夜间模式样式 */
+body.dark .secondary-button {
+    background: #5a6268;
+}
+
+body.dark .secondary-button:hover {
+    background: #495057;
+    box-shadow: 0 5px 15px rgba(89, 98, 104, 0.4);
+}
+
+body.dark .export-button {
+    background: #3aafaa;
+}
+
+body.dark .export-button:hover {
+    background: #2a9f9a;
+    box-shadow: 0 5px 15px rgba(58, 175, 170, 0.4);
+}
+
+body.dark .save-button {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+body.dark .save-button:hover {
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+body.dark .camera-list {
+    background-color: #34495e;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .camera-item {
+    background-color: #2c3e50;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .camera-name, 
+body.dark .camera-type {
+    color: #ecf0f1;
+}
+
+body.dark .camera-url {
+    color: #95a5a6;
+}
+
+body.dark .delete-button {
+    background-color: #c0392b;
+}
+
+body.dark .delete-button:hover {
+    background-color: #a93226;
+}
+
+/* 字体大小调整 */
+body.small .header h1 {
+    font-size: 1.8rem;
+}
+
+body.small .back-link {
+    font-size: 0.9rem;
+    padding: 6px 14px;
+}
+
+body.small .settings-section h2 {
+    font-size: 1.1rem;
+}
+
+body.small .setting-item label {
+    font-size: 1rem;
+}
+
+body.small .setting-item select {
+    font-size: 0.9rem;
+    padding: 6px 13px;
+}
+
+body.small .secondary-button {
+    font-size: 0.9rem;
+    padding: 8px 18px;
+}
+
+body.small .export-button {
+    font-size: 0.9rem;
+    padding: 8px 18px;
+}
+
+body.small .save-button {
+    font-size: 1rem;
+    padding: 10px 35px;
+}
+
+body.small .camera-name, 
+body.small .camera-type {
+    font-size: 0.9rem;
+}
+
+body.small .camera-url {
+    font-size: 12px;
+}
+
+body.small .delete-button {
+    font-size: 0.8rem;
+    padding: 6px 14px;
+}
+
+body.large .header h1 {
+    font-size: 2.2rem;
+}
+
+body.large .back-link {
+    font-size: 1.1rem;
+    padding: 10px 18px;
+}
+
+body.large .settings-section h2 {
+    font-size: 1.5rem;
+}
+
+body.large .setting-item label {
+    font-size: 1.2rem;
+}
+
+body.large .setting-item select {
+    font-size: 1.1rem;
+    padding: 10px 17px;
+}
+
+body.large .secondary-button {
+    font-size: 1.1rem;
+    padding: 12px 22px;
+}
+
+body.large .export-button {
+    font-size: 1.1rem;
+    padding: 12px 22px;
+}
+
+body.large .save-button {
+    font-size: 1.2rem;
+    padding: 14px 45px;
+}
+
+body.large .camera-name, 
+body.large .camera-type {
+    font-size: 1.1rem;
+}
+
+body.large .camera-url {
+    font-size: 16px;
+}
+
+body.large .delete-button {
+    font-size: 1rem;
+    padding: 10px 18px;
+}
+
+/* 绑定日志样式 */
+.bind-log-container {
+    margin-top: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+body.dark .bind-log-container {
+    background: #34495e;
+}
+
+.bind-log-items {
+    margin-bottom: 10px;
+}
+
+.bind-log-item {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+}
+
+body.dark .bind-log-item {
+    border-bottom: 1px solid #2c3e50;
+    color: #bdc3c7;
+}
+
+.bind-log-item:last-child {
+    border-bottom: none;
+}
+
+.view-more-logs {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.view-more-button {
+    background: #4ecdc4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-more-button:hover {
+    background: #3aafaa;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(78, 205, 196, 0.4);
+}
+
+body.dark .view-more-button {
+    background: #3498db;
+}
+
+body.dark .view-more-button:hover {
+    background: #2980b9;
+    box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4);
+}
+
+/* 字体大小调整 */
+body.small .bind-log-item {
+    font-size: 0.8rem;
+}
+
+body.small .view-more-button {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+}
+
+body.large .bind-log-item {
+    font-size: 1rem;
+}
+
+body.large .view-more-button {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+}

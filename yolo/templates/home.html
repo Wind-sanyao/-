@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>火眼金睛</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+</head>
+<body class="{{ setting.theme }} {{ setting.font_size }}">
+    <div class="home-container">
+        <div class="decorative-circle decorative-circle-1"></div>
+        <div class="decorative-circle decorative-circle-2"></div>
+        <div class="decorative-circle decorative-circle-3"></div>
+        <div class="decorative-circle decorative-circle-4"></div>
+        <div class="decorative-square decorative-square-1"></div>
+        <div class="decorative-square decorative-square-2"></div>
+        <div class="decorative-square decorative-square-3"></div>
+        
+        <div class="header">
+            <div class="settings-icon">
+                <a href="/settings">⚙️</a>
+            </div>
+            <div class="user-info">
+                <span>欢迎，{{ user.username }}</span>
+                <a href="/logout" class="logout-link">退出</a>
+            </div>
+        </div>
+        
+        <div class="content-wrapper">
+            <h1 class="title">火眼金睛</h1>
+            <p class="subtitle">智能摄像头监控系统</p>
+            <button class="main-button" onclick="window.location.href='/bind'">绑定摄像头</button>
+            <button class="main-button" onclick="window.location.href='/upload'">上传影像</button>
+        </div>
+    </div>
+</body>
+</html>

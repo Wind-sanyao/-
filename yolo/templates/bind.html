@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摄像头绑定</title>
+    <link rel="stylesheet" href="/static/css/bind.css">
+</head>
+<body>
+    <div class="decorative-circle decorative-circle-1"></div>
+    <div class="decorative-circle decorative-circle-2"></div>
+    <div class="decorative-circle decorative-circle-3"></div>
+    <div class="decorative-circle decorative-circle-4"></div>
+    <div class="decorative-square decorative-square-1"></div>
+    <div class="decorative-square decorative-square-2"></div>
+    <div class="decorative-square decorative-square-3"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>摄像头绑定</h1>
+        </div>
+        
+        <div class="button-container">
+            <div class="split-button">
+                <button class="split-button-left" onclick="selectExistingCamera()">选择已有摄像头</button>
+                <button class="split-button-right" onclick="bindNewCamera()">绑定新摄像头</button>
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <form id="bindForm" method="POST" action="/bind">
+                <div id="existingCameraSection" class="form-group">
+                    <label for="cameraInfo">摄像头信息</label>
+                    <select id="cameraInfo" name="cameraInfo">
+                        <option value="">请选择摄像头信息</option>
+                        <optgroup label="我的摄像头">
+                            {% for camera in user_cameras %}
+                            <option value="{{ camera.id }}">{{ camera.name }}</option>
+                            {% endfor %}
+                        </optgroup>
+                        <optgroup label="预录入信息">
+                            {% for camera in predefined_cameras %}
+                            <option value="{{ camera.id }}">{{ camera.name }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <div id="newCameraSection">
+                    <div class="form-group">
+                        <label for="cameraType">摄像头类型</label>
+                        <select id="cameraType" name="cameraType" required>
+                            <option value="">请选择摄像头类型</option>
+                            <option value="usb">USB摄像头</option>
+                            <option value="rtsp">网络摄像头</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cameraName">摄像头名称</label>
+                        <input type="text" id="cameraName" name="cameraName" maxlength="50" required>
+                    </div>
+                    
+                    <div id="usbFields" class="camera-fields hidden">
+                        <div class="form-group">
+                            <label for="deviceIndex">设备索引</label>
+                            <select id="deviceIndex" name="deviceIndex">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="rtspFields" class="camera-fields hidden">
+                        <div class="form-group">
+                            <label for="ipAddress">IP地址</label>
+                            <input type="text" id="ipAddress" name="ipAddress" placeholder="192.168.1.100">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="port">端口</label>
+                            <input type="number" id="port" name="port" min="1" max="65535" value="554">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" id="username" name="username">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" id="password" name="password">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="brand">摄像头品牌</label>
+                            <select id="brand" name="brand">
+                                <option value="">请选择品牌</option>
+                                <option value="hikvision">海康威视</option>
+                                <option value="dahua">大华</option>
+                                <option value="axis">安讯士</option>
+                                <option value="bosch">博世</option>
+                                <option value="samsung">三星</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" id="bindButton" disabled>绑定摄像头</button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="successMessage" class="success-message hidden"></div>
+    </div>
+    
+    <script src="/static/js/bind.js"></script>
+    <script>
+        // 选择已有摄像头
+        function selectExistingCamera() {
+            // 切换按钮样式
+            const leftButton = document.querySelector('.split-button-left');
+            const rightButton = document.querySelector('.split-button-right');
+            
+            leftButton.classList.add('active');
+            leftButton.classList.remove('inactive');
+            rightButton.classList.add('inactive');
+            rightButton.classList.remove('active');
+            
+            // 显示已有摄像头界面，隐藏新摄像头界面
+            document.getElementById('existingCameraSection').style.display = 'block';
+            document.getElementById('newCameraSection').style.display = 'none';
+            
+            // 聚焦到摄像头信息选择框
+            document.getElementById('cameraInfo').focus();
+        }
+        
+        // 绑定新摄像头
+        function bindNewCamera() {
+            // 切换按钮样式
+            const leftButton = document.querySelector('.split-button-left');
+            const rightButton = document.querySelector('.split-button-right');
+            
+            rightButton.classList.add('active');
+            rightButton.classList.remove('inactive');
+            leftButton.classList.add('inactive');
+            leftButton.classList.remove('active');
+            
+            // 隐藏已有摄像头界面，显示新摄像头界面
+            document.getElementById('existingCameraSection').style.display = 'none';
+            document.getElementById('newCameraSection').style.display = 'block';
+            
+            // 清空摄像头名称
+            document.getElementById('cameraName').value = '';
+            
+            // 聚焦到摄像头类型选择框
+            document.getElementById('cameraType').focus();
+        }
+        
+        // 页面加载时默认显示已有摄像头界面
+        window.onload = function() {
+            selectExistingCamera();
+        };
+    </script>
+</body>
+</html>

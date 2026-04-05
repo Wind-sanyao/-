@@ -1,0 +1,240 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: '黑体', Arial, sans-serif;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: auto;
+}
+
+.monitor-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    width: 90%;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.camera-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.camera-info span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.detection-container {
+    margin-bottom: 30px;
+}
+
+.detection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.detection-header h3 {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: normal;
+}
+
+.detection-status {
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    background: #e0e0e0;
+    color: #666;
+}
+
+.detection-image-container {
+    background: #f5f5f5;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.detection-image-container img {
+    max-width: 100%;
+    max-height: 360px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.detection-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+
+.loading-spinner {
+    border: 4px solid rgba(255, 107, 107, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #ff6b6b;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+
+.error-content {
+    text-align: center;
+    max-width: 400px;
+    padding: 0 20px;
+}
+
+.error-content h2 {
+    color: #c62828;
+    margin-bottom: 15px;
+}
+
+.error-content p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.error-content button {
+    padding: 10px 25px;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.error-content button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+.exit-container {
+    text-align: center;
+}
+
+.exit-button {
+    padding: 10px 30px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.exit-button:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .monitor-container {
+        padding: 20px;
+    }
+    
+    .detection-image-container {
+        min-height: 300px;
+        padding: 15px;
+    }
+    
+    .detection-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .monitor-container {
+        padding: 15px;
+    }
+    
+    .camera-info span {
+        font-size: 1.2rem;
+    }
+    
+    .detection-image-container {
+        min-height: 250px;
+    }
+}

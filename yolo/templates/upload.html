@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传影像</title>
+    <link rel="stylesheet" href="/static/css/upload.css">
+</head>
+<body class="{{ setting.theme }} {{ setting.font_size }}">
+    <div class="decorative-circle decorative-circle-1"></div>
+    <div class="decorative-circle decorative-circle-2"></div>
+    <div class="decorative-circle decorative-circle-3"></div>
+    <div class="decorative-square decorative-square-1"></div>
+    <div class="decorative-square decorative-square-2"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>上传影像</h1>
+            <a href="/" class="back-link">返回首页</a>
+        </div>
+        
+        <div class="upload-form">
+            <form id="uploadForm" method="POST" enctype="multipart/form-data" action="/upload">
+                <div class="form-group">
+                    <label for="file">选择文件</label>
+                    <input type="file" id="file" name="file" accept="image/*,video/*" required>
+                    <p class="hint">支持的格式: JPG, PNG, MP4, AVI, MOV</p>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" id="uploadButton">上传并检测</button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="loading-spinner"></div>
+            <p>正在处理，请稍候...</p>
+        </div>
+        
+        <div id="resultContainer" class="result-container hidden">
+            <h2>检测结果</h2>
+            
+            <div class="result-content">
+                <div class="file-info">
+                    <h3>文件信息</h3>
+                    <p><span class="label">文件名:</span> <span id="fileName"></span></p>
+                    <p><span class="label">文件类型:</span> <span id="fileType"></span></p>
+                    <p><span class="label">文件大小:</span> <span id="fileSize"></span></p>
+                </div>
+                
+                <div class="detection-result">
+                    <h3>检测结果</h3>
+                    <div id="resultContent"></div>
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/upload.js"></script>
+</body>
+</html>
