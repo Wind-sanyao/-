@@ -671,3 +671,190 @@ body.large .view-more-button {
     font-size: 0.9rem;
     padding: 8px 14px;
 }
+
+/* 导出表单样式 */
+.export-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+body.dark .export-form {
+    background: rgba(52, 73, 94, 0.8);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.export-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.export-form .form-group label {
+    font-size: 0.9rem;
+    color: #333;
+    transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+body.dark .export-form .form-group label {
+    color: #ecf0f1;
+}
+
+.export-form .form-group input,
+.export-form .form-group select {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease, background 0.3s ease, font-size 0.3s ease;
+    background: white;
+}
+
+body.dark .export-form .form-group input,
+body.dark .export-form .form-group select {
+    border-color: #34495e;
+    background: #2c3e50;
+    color: #ecf0f1;
+}
+
+.export-form .form-group input:focus,
+.export-form .form-group select:focus {
+    outline: none;
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+}
+
+body.dark .export-form .form-group input:focus,
+body.dark .export-form .form-group select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.export-form button {
+    grid-column: 1 / -1;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease, font-size 0.3s ease;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    color: white;
+    margin-top: 10px;
+}
+
+.export-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+body.dark .export-form button {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+body.dark .export-form button:hover {
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+/* 字体大小调整 */
+body.small .export-form .form-group label {
+    font-size: 0.8rem;
+}
+
+body.small .export-form .form-group input,
+body.small .export-form .form-group select {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+}
+
+body.small .export-form button {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+}
+
+body.large .export-form .form-group label {
+    font-size: 1rem;
+}
+
+body.large .export-form .form-group input,
+body.large .export-form .form-group select {
+    font-size: 1rem;
+    padding: 12px 18px;
+}
+
+body.large .export-form button {
+    font-size: 1.1rem;
+    padding: 14px 28px;
+}
+
+/* 响应式调整 */
+@media (max-width: 600px) {
+    .export-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 加载覆盖层样式 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+}
+
+.loading-content {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .loading-content {
+    background: #34495e;
+    color: #ecf0f1;
+}
+
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ff6b6b;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+body.dark .loading-spinner {
+    border-color: #34495e;
+    border-top-color: #3498db;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-content p {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+body.dark .loading-content p {
+    color: #ecf0f1;
+}

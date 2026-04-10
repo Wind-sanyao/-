@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>设置 - 火眼金睛</title>
     <link rel="stylesheet" href="/static/css/settings.css">
+    <script src="/static/js/settings.js"></script>
 </head>
 <body class="{{ setting.theme }} {{ setting.font_size }}">
     <div class="settings-container">
@@ -75,6 +76,40 @@
                     <button type="submit" class="save-button">保存设置</button>
                 </div>
             </form>
+            
+            <!-- 独立的导出表单 -->
+            <div class="settings-section">
+                <h2>摄像头检测数据导出</h2>
+                <p>导出摄像头检测到的烟火数据</p>
+                <form method="POST" action="/api/detection/export" class="export-form">
+                    <div class="form-group">
+                        <label for="cameraSelect">选择摄像头</label>
+                        <select id="cameraSelect" name="camera_id" required>
+                            <option value="">所有摄像头</option>
+                            {% for camera in user_cameras %}
+                            <option value="{{ camera.id }}">{{ camera.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">开始日期</label>
+                        <input type="date" id="startDate" name="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">结束日期</label>
+                        <input type="date" id="endDate" name="end_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="startTime">开始时间</label>
+                        <input type="time" id="startTime" name="start_time" value="00:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="endTime">结束时间</label>
+                        <input type="time" id="endTime" name="end_time" value="23:59">
+                    </div>
+                    <button type="submit" class="export-button">导出Excel</button>
+                </form>
+            </div>
         </div>
     </div>
     

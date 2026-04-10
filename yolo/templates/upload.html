@@ -15,22 +15,64 @@
     
     <div class="container">
         <div class="header">
+            <button class="back-button" onclick="window.history.back()" title="返回上一页">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
             <h1>上传影像</h1>
-            <a href="/" class="back-link">返回首页</a>
         </div>
         
-        <div class="upload-form">
-            <form id="uploadForm" method="POST" enctype="multipart/form-data" action="/upload">
-                <div class="form-group">
-                    <label for="file">选择文件</label>
-                    <input type="file" id="file" name="file" accept="image/*,video/*" required>
-                    <p class="hint">支持的格式: JPG, PNG, MP4, AVI, MOV</p>
+        <div class="upload-tabs">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="image">图片</button>
+                <button class="tab-button" data-tab="video">视频</button>
+                <button class="tab-button" data-tab="folder">文件夹</button>
+            </div>
+            
+            <div class="tab-content">
+                <div class="tab-pane active" id="image-tab">
+                    <form id="imageForm" method="POST" enctype="multipart/form-data" action="/upload">
+                        <div class="form-group">
+                            <label for="imageFile">选择图片</label>
+                            <input type="file" id="imageFile" name="file" accept="image/*" required>
+                            <p class="hint">支持的格式: JPG, PNG</p>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="upload-button">上传并检测</button>
+                        </div>
+                    </form>
                 </div>
                 
-                <div class="form-actions">
-                    <button type="submit" id="uploadButton">上传并检测</button>
+                <div class="tab-pane" id="video-tab">
+                    <form id="videoForm" method="POST" enctype="multipart/form-data" action="/upload">
+                        <div class="form-group">
+                            <label for="videoFile">选择视频</label>
+                            <input type="file" id="videoFile" name="file" accept="video/*,.gif" required>
+                            <p class="hint">支持的格式: MP4, AVI, MOV, GIF</p>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="upload-button">上传并检测</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+                
+                <div class="tab-pane" id="folder-tab">
+                    <form id="folderForm" method="POST" enctype="multipart/form-data" action="/upload/folder">
+                        <div class="form-group">
+                            <label for="folderFile">选择文件夹</label>
+                            <input type="file" id="folderFile" name="files" webkitdirectory directory multiple required>
+                            <p class="hint">选择包含图片的文件夹</p>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="upload-button">上传并检测</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
         
         <div id="loadingOverlay" class="loading-overlay hidden">

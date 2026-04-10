@@ -97,6 +97,27 @@ class SystemLog(db.Model):
             'created_at': self.created_at.isoformat()
         }
 
+class FireDetection(db.Model):
+    __tablename__ = 'fire_detection'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    camera_id = db.Column(db.Integer, db.ForeignKey('camera_info.id'), nullable=False)
+    camera_name = db.Column(db.String(50), nullable=False)
+    detected_at = db.Column(db.DateTime, default=datetime.utcnow)
+    confidence = db.Column(db.Float, nullable=False)
+    status = db.Column(db.String(20), nullable=False)  # fire, smoke, none
+    frame_data = db.Column(db.Text)  # 可选，存储检测帧的base64
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'camera_name': self.camera_name,
+            'detected_at': self.detected_at.isoformat(),
+            'confidence': self.confidence,
+            'status': self.status
+        }
+
 class UserSetting(db.Model):
     __tablename__ = 'user_setting'
     

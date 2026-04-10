@@ -206,14 +206,137 @@ document.addEventListener('DOMContentLoaded', function() {
     username.addEventListener('input', checkFormValidity);
     password.addEventListener('input', checkFormValidity);
     
+    // 测试摄像头功能
+    const testCameraButton = document.getElementById('testCameraButton');
+    if (testCameraButton) {
+        testCameraButton.addEventListener('click', function() {
+            const deviceIndex = document.getElementById('deviceIndex').value;
+            const testResult = document.getElementById('cameraTestResult');
+            
+            testResult.textContent = '测试中...';
+            testResult.className = 'test-result testing';
+            testCameraButton.disabled = true;
+            
+            fetch('/api/camera/test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ deviceIndex: deviceIndex })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || '测试失败');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    testResult.textContent = '测试成功！摄像头可用';
+                    testResult.className = 'test-result success';
+                } else {
+                    testResult.textContent = `测试失败: ${data.error}`;
+                    testResult.className = 'test-result error';
+                }
+            })
+            .catch(error => {
+                testResult.textContent = `测试失败: ${error.message}`;
+                testResult.className = 'test-result error';
+            })
+            .finally(() => {
+                testCameraButton.disabled = false;
+            });
+        });
+    }
+    
     // 表单提交处理
     document.getElementById('bindForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // 阻止默认表单提交
+        
         // 显示加载状态
         bindButton.disabled = true;
         bindButton.textContent = '绑定中...';
         
         console.log('表单提交，正在绑定摄像头...');
         
-        // 表单会自动提交到服务器，不需要阻止默认行为
+        // 检查当前显示的是哪个界面
+        const existingCameraSection = document.getElementById('existingCameraSection');
+        const newCameraSection = document.getElementById('newCameraSection');
+        
+        let formData = {};
+        
+        // 如果显示的是已有摄像头界面
+        if (existingCameraSection.style.display !== 'none') {
+            const cameraId = cameraInfo.value;
+            formData = { cameraId: cameraId };
+        }
+        // 如果显示的是新摄像头界面
+        else if (newCameraSection.style.display !== 'none') {
+            const cameraTypeValue = cameraType.value;
+            const cameraNameValue = cameraName.value;
+            
+            if (cameraTypeValue === 'usb') {
+                const deviceIndexValue = deviceIndex.value;
+                formData = {
+                    cameraType: cameraTypeValue,
+                    name: cameraNameValue,
+                    deviceIndex: deviceIndexValue
+                };
+            } else if (cameraTypeValue === 'rtsp') {
+                const ipValue = ipAddress.value;
+                const portValue = port.value;
+                const usernameValue = username.value;
+                const passwordValue = password.value;
+                const brandValue = brand.value;
+                
+                formData = {
+                    cameraType: cameraTypeValue,
+                    name: cameraNameValue,
+                    ipAddress: ipValue,
+                    port: portValue,
+                    username: usernameValue,
+                    password: passwordValue,
+                    brand: brandValue
+                };
+            }
+        }
+        
+        console.log('提交的表单数据:', formData);
+        
+        // 使用AJAX提交表单
+        fetch('/api/camera/bind', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || '绑定失败');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                console.log('绑定成功，会话ID:', data.sessionId);
+                // 跳转到监控页面
+                window.location.href = `/monitor/${data.sessionId}`;
+            } else {
+                throw new Error(data.error || '绑定失败');
+            }
+        })
+        .catch(error => {
+            console.error('绑定失败:', error);
+            // 显示错误信息
+            alert('绑定失败: ' + error.message);
+            // 恢复按钮状态
+            bindButton.disabled = false;
+            bindButton.textContent = '绑定摄像头';
+        });
     });
 });

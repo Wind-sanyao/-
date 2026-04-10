@@ -95,6 +95,28 @@ body {
 .header {
     text-align: center;
     margin-bottom: 30px;
+    position: relative;
+}
+
+.back-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-button:hover {
+    background: rgba(231, 76, 60, 0.1);
+    transform: translateX(-5px);
 }
 
 .header h1 {
@@ -278,4 +300,48 @@ body {
         padding: 10px 30px;
         font-size: 1rem;
     }
+}
+
+/* 测试摄像头样式 */
+.secondary-button {
+    padding: 10px 20px;
+    background-color: #4ecdc4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.secondary-button:hover {
+    background-color: #3aafaa;
+}
+
+.secondary-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.test-result {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.test-result.testing {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.test-result.success {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.test-result.error {
+    background-color: #ffebee;
+    color: #c62828;
 }

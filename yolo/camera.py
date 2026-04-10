@@ -4,13 +4,15 @@ import queue
 from datetime import datetime
 import time
 import os
-from models import db, SystemLog
+import numpy as np
+from models import db, SystemLog, FireDetection
 
 class VideoCapturer:
-    def __init__(self, source_type, source_url, user_id):
+    def __init__(self, source_type, source_url, user_id, camera_id=None):
         self.source_type = source_type
         self.source_url = source_url
         self.user_id = user_id
+        self.camera_id = camera_id
         self.cap = None
         self.frame_queue = queue.Queue(maxsize=10)
         self.running = False
@@ -28,7 +30,7 @@ class VideoCapturer:
         except Exception as e:
             print(f"模型加载失败，但不影响摄像头连接: {e}")
         self.camera_name = "未知摄像头"
-        print(f"初始化VideoCapturer: {source_type}, {source_url}")
+        print(f"初始化VideoCapturer: {source_type}, {source_url}, camera_id: {camera_id}")
         
     def _load_model(self):
         try:
@@ -74,6 +76,7 @@ class VideoCapturer:
                             max_confidence = confidence
             
             if fire_detected:
+                # 保存到系统日志
                 log = SystemLog(
                     user_id=self.user_id,
                     camera_name=self.camera_name,
@@ -85,6 +88,21 @@ class VideoCapturer:
                     db.session.commit()
                 except Exception as e:
                     print(f"Error saving fire detection log: {e}")
+                
+                # 保存到FireDetection表
+                if self.camera_id:
+                    fire_detection = FireDetection(
+                        user_id=self.user_id,
+                        camera_id=self.camera_id,
+                        camera_name=self.camera_name,
+                        confidence=max_confidence,
+                        status='fire'
+                    )
+                    try:
+                        db.session.add(fire_detection)
+                        db.session.commit()
+                    except Exception as e:
+                        print(f"Error saving fire detection data: {e}")
             
             return annotated_frame, fire_detected, max_confidence
         except Exception as e:
@@ -145,7 +163,9 @@ class VideoCapturer:
                         print("获取到空帧")
                 else:
                     self.last_error = "无法读取摄像头画面"
-                    self.running = False
+                    print("无法读取摄像头画面，尝试继续捕获...")
+                    # 不要立即停止，尝试继续捕获
+                    time.sleep(0.1)
             except Exception as e:
                 self.last_error = str(e)
                 print(f"捕获循环出错: {e}")
@@ -188,13 +208,40 @@ class VideoCapturer:
             else:
                 print("detected_frame为空或大小为0")
                 # 尝试返回原始帧
-                return self.get_frame()
+                frame_data = self.get_frame()
+                if frame_data:
+                    return frame_data
+                # 如果原始帧也为空，创建一个默认帧
+                else:
+                    print("原始帧也为空，创建默认帧")
+                    # 创建一个黑色背景的默认帧
+                    default_frame = cv2.imread('static/images/default_frame.jpg')
+                    if default_frame is not None:
+                        ret, jpeg = cv2.imencode('.jpg', default_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 75])
+                        if ret:
+                            return jpeg.tobytes()
+                    # 如果默认帧也不存在，创建一个简单的黑色帧
+                    black_frame = cv2.zeros((480, 640, 3), dtype=np.uint8)
+                    ret, jpeg = cv2.imencode('.jpg', black_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 75])
+                    if ret:
+                        return jpeg.tobytes()
             return None
         except Exception as e:
             self.last_error = str(e)
             print(f"获取检测画面出错: {e}")
             # 尝试返回原始帧
-            return self.get_frame()
+            frame_data = self.get_frame()
+            if frame_data:
+                return frame_data
+            # 如果原始帧也为空，创建一个默认帧
+            try:
+                black_frame = cv2.zeros((480, 640, 3), dtype=np.uint8)
+                ret, jpeg = cv2.imencode('.jpg', black_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 75])
+                if ret:
+                    return jpeg.tobytes()
+            except:
+                pass
+            return None
     
     def get_detection_status(self):
         return {

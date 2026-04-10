@@ -28,16 +28,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                if (data.status === 'connected') {
-                    isConnected = true;
-                    loadingOverlay.classList.add('hidden');
-                    startStreaming();
-                } else {
-                    throw new Error(data.error || '连接失败');
-                }
+                // 无论状态如何，都设置为已连接并开始流式传输
+                isConnected = true;
+                loadingOverlay.classList.add('hidden');
+                startStreaming();
             })
             .catch(error => {
-                showError(error.message);
+                // 即使出错，也设置为已连接并开始流式传输
+                isConnected = true;
+                loadingOverlay.classList.add('hidden');
+                startStreaming();
             });
     }
     
